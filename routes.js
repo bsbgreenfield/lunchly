@@ -12,6 +12,9 @@ const router = new express.Router();
 router.get("/", async function(req, res, next) {
   try {
     const customers = await Customer.all();
+    for (let customer of customers){
+       customer.fullName = await customer.fullName() 
+    }
     return res.render("customer_list.html", { customers });
   } catch (err) {
     return next(err);
@@ -54,7 +57,8 @@ router.get("/:id/", async function(req, res, next) {
 
     const reservations = await customer.getReservations();
 
-    return res.render("customer_detail.html", { customer, reservations });
+    const customerName = await customer.fullName()
+    return res.render("customer_detail.html", { customer, reservations, customerName });
   } catch (err) {
     return next(err);
   }

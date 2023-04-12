@@ -16,13 +16,9 @@ class Reservation {
     this.notes = notes;
   }
 
-  /** formatter for startAt */
-
   getformattedStartAt() {
     return moment(this.startAt).format('MMMM Do YYYY, h:mm a');
   }
-
-  /** given a customer id, find their reservations. */
 
   static async getReservationsForCustomer(customerId) {
     const results = await db.query(
@@ -38,7 +34,14 @@ class Reservation {
 
     return results.rows.map(row => new Reservation(row));
   }
+
+  async save(){
+      const newRes = await db.query(
+        `INSERT INTO reservations (customer_id, num_guests, start_at, notes)
+        VALUES ($1, $2, $3, $4)`, 
+        [this.customerId, this.numGuests, this.startAt, this.notes]
+      )
+  }
 }
 
-
-module.exports = Reservation;
+module.exports = Reservation;sk 
